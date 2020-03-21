@@ -16,13 +16,14 @@
   (println "eg: lein run 100 10000 10 8 true\n")
   (println "lein run {cnt-go-thread} {cnt-msg} {buffer-size} {pool-size} {true/false as is add heavy task per each go calc function\n")
   (try
-    (let [go-cnt      (Long. (nth args 0))
-          msg-cnt     (Long. (nth args 1))
-          buffer-size (Long. (nth args 2))
+    (let [go-cnt      (Integer/parseInt (nth args 0))
+          msg-cnt     (Integer/parseInt (nth args 1))
+          buffer-size (Integer/parseInt (nth args 2))
           pool-size   (str (nth args 3))
-          is-heavy    (Boolean. (last args))]
+          is-heavy    (Boolean/parseBoolean (last args))]
       (System/setProperty "clojure.core.async.pool-size" pool-size)
       (mk/test-channel go-cnt msg-cnt buffer-size is-heavy))
     (catch Exception e
+      (println (.getMessage e))
       (println "please input correct args: \n"
                "eg: lein run 100 10000 10 8 true"))))
