@@ -4,17 +4,17 @@
   (:gen-class))
 
 (defn heavy-task []
-  (reduce str ""  (range 10000)))
+  (reduce str ""  (range 100)))
 
 (defn timestamp []
   (java.util.Date.) )
 
 (defn append-ch [c1 buffer-size with-heavy?]
   (let [c-inc (a/chan buffer-size
-                      (map (do
-                             (when with-heavy?
-                               (heavy-task))
-                             inc)))]
+                      (map #(do
+                              (when with-heavy?
+                                (heavy-task))
+                              (inc %))))]
     (a/pipe c1 c-inc)
     c-inc))
 
@@ -25,6 +25,7 @@
             (if-not (> i 0)
               c-out
               (recur (dec i) c-out))))]
+    (println "channel initial finished!")
     c-o))
 
 (defn test-channel [go-thread-cnt msg-cnt buffer-size with-heavy?]
